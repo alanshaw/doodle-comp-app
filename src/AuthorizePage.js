@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useKeyring } from '@w3ui/react-keyring'
 import { useNavigate } from 'react-router-dom'
 import Nav, { NavSpacer } from './components/Nav.js'
@@ -12,13 +12,14 @@ export function AuthorizePage ({ competitionSpaceDID }) {
   const [submitted, setSubmitted] = useState(false)
   const appSpaces = spaces.filter(s => s.did() !== competitionSpaceDID)
 
-  if (account) {
-    if (appSpaces.length === 1) {
+  useEffect(() => {
+    if (account && appSpaces.length === 1) {
       localStorage.setItem('appSpaceDID', appSpaces[0].did())
       navigate('/draw')
-      return null
     }
+  }, [account, appSpaces, navigate])
 
+  if (account) {
     const handleRegisterSpaceSubmit = async e => {
       e.preventDefault()
       const did = await createSpace()
